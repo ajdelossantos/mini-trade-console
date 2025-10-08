@@ -1,14 +1,16 @@
-import type { Symbol } from './stores.ts';
+import type { Symbol } from './stores';
 
-/**
- * Map our UI symbols to CoinCap asset ids.
- * We keep ES/NQ/CL labels but fetch btc/eth/ltc prices for demo purposes.
- */
-export const COINCAP_MAP: Record<Symbol, string> = {
-	ES: 'bitcoin',
-	NQ: 'ethereum',
-	CL: 'litecoin'
+/** UI labels */
+export const SYMBOLS: Symbol[] = ['ES', 'NQ', 'CL'];
+
+/** Map UI symbols → Coinbase Exchange product_ids */
+export const COINBASE_PRODUCT_MAP: Record<Symbol, string> = {
+	ES: 'BTC-USD',
+	NQ: 'ETH-USD',
+	CL: 'LTC-USD'
 };
 
-/** Convenience list for the WS query string */
-export const coincapAssetsCsv = Object.values(COINCAP_MAP).join(',');
+/** Reverse map for lookup from product_id → UI symbol */
+export const PRODUCT_TO_UI: Record<string, Symbol> = Object.fromEntries(
+	Object.entries(COINBASE_PRODUCT_MAP).map(([ui, prod]) => [prod, ui as Symbol])
+);
