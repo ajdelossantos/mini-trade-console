@@ -1,17 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import {
-		prices,
-		lastPrices,
-		positions,
-		pnl,
-		lastLatency,
-		SYMBOLS,
-		type Symbol
-	} from '$lib/stores';
-	import { connectPrices } from '$lib/api/coincap';
+	import { prices, lastPrices, positions, pnl, lastLatency, type Symbol } from '$lib/stores';
+	import { SYMBOLS } from '$lib/symbols';
+	import { connectTickers } from '$lib/api/coinbase';
 
-	// Order form local state
+	// Order form state
 	let sym: Symbol = 'ES';
 	let side: 'buy' | 'sell' = 'buy';
 	let qty = 1;
@@ -19,18 +12,20 @@
 	let statusMsg = '';
 
 	onMount(() => {
-		// TODO: Connect CoinCap WS here using connectPrices(...)
-		// - update prices/lastPrices stores
-		// - cleanup via returned disconnect()
-		// const conn = connectPrices((uiSymbol, price, ts) => { /* update stores */ });
+		// TODO: connect coinbase WS
+		// const conn = connectTickers((uiSymbol, price, isoTime) => {
+		//   // TODO: update lastPrices[uiSymbol], then prices[uiSymbol]
+		//   // (avoid full-object nukes; use store.update to change only the key)
+		// });
 		// return () => conn.disconnect();
 	});
 
 	async function submitOrder() {
-		// TODO: POST /api/order, optimistic positions, update lastLatency, statusMsg, disable while pending
+		// TODO: POST /api/order; optimistic positions; update lastLatency; set statusMsg
 	}
 </script>
 
+<!-- Watchlist -->
 <section aria-labelledby="watchlist-h" class="rounded-2xl bg-card p-3 md:col-span-1">
 	<h2 id="watchlist-h" class="mb-2 text-sm text-accent">Watchlist (Realtime)</h2>
 	<table class="w-full border-collapse" aria-describedby="watchlist-desc">
@@ -47,13 +42,14 @@
 				<tr>
 					<td class="border-b border-slate-800 p-2 font-semibold">{s}</td>
 					<td class="border-b border-slate-800 p-2">{$prices[s] ?? '—'}</td>
-					<td class="border-b border-slate-800 p-2">—</td>
+					<td class="border-b border-slate-800 p-2">— <!-- TODO: ▲/▼ vs lastPrices --></td>
 				</tr>
 			{/each}
 		</tbody>
 	</table>
 </section>
 
+<!-- Order Ticket -->
 <section aria-labelledby="order-h" class="rounded-2xl bg-card p-3 md:col-span-1">
 	<h2 id="order-h" class="mb-2 text-sm text-accent">Order Ticket</h2>
 	<form on:submit|preventDefault={submitOrder} aria-describedby="order-help">
@@ -105,6 +101,7 @@
 	</form>
 </section>
 
+<!-- Positions & PnL -->
 <section aria-labelledby="pos-h" class="rounded-2xl bg-card p-3 md:col-span-2">
 	<h2 id="pos-h" class="mb-2 text-sm text-accent">Positions &amp; P&amp;L</h2>
 	<table class="w-full border-collapse">
