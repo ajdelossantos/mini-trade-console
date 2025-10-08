@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { prices, lastPrices, positions, pnl, lastLatency, type Symbol } from '$lib/stores';
+	import { prices, positions, pnl, lastLatency, type Symbol, applyPriceTick } from '$lib/stores';
 	import { SYMBOLS } from '$lib/symbols';
 	import { connectTickers } from '$lib/api/coinbase';
 
@@ -12,12 +12,14 @@
 	let statusMsg = '';
 
 	onMount(() => {
-		// TODO: connect coinbase WS
-		// const conn = connectTickers((uiSymbol, price, isoTime) => {
-		//   // TODO: update lastPrices[uiSymbol], then prices[uiSymbol]
-		//   // (avoid full-object nukes; use store.update to change only the key)
-		// });
-		// return () => conn.disconnect();
+		const conn = connectTickers(
+			(uiSymbol, price, _isoTime) => {
+				applyPriceTick(uiSymbol, price);
+			},
+			{ log: false }
+		);
+
+		return () => conn.disconnect();
 	});
 
 	async function submitOrder() {
