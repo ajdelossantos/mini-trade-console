@@ -1,38 +1,39 @@
-# sv
+# Mini Trade Console (SvelteKit + CoinCap WS + Tailwind)
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+A tiny SvelteKit app to refresh: CSR/SSR boundaries, **WebSocket** streaming (CoinCap), order POST flow, optimistic updates, and derived P&L — styled with Tailwind.
 
-## Creating a project
+## Run
 
-If you're seeing this, you've probably already done this step. Congrats!
+- Node 20+
+- `npm i`
+- `npm run dev`
+- `npm run test`
 
-```sh
-# create a new project in the current directory
-npx sv create
+## External Feed
 
-# create a new project in my-app
-npx sv create my-app
-```
+- WebSocket: `wss://ws.coincap.io/prices?assets=bitcoin,ethereum,litecoin`
+- UI symbols: ES/NQ/CL → mapped to CoinCap assets: bitcoin/ethereum/litecoin (demo only; you’ll narrate why)
 
-## Developing
+## What it does (after TODOs are filled)
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+- Connects CoinCap WS (client-only), updates **prices** and **lastPrices** stores.
+- Submits mock orders via `/api/order` and displays round-trip **latency**.
+- Tracks **positions** and derives naive **P&L** from prices × qty (baseline 100).
 
-```sh
-npm run dev
+## A11y & Perf
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+- Proper labels; status via `aria-live="polite"`.
+- Store updates are batched; no prop drilling.
 
-## Building
+## Tests (minimal)
 
-To create a production version of your app:
+- `stores.pnl.test.ts` — P&L derivation.
+- `order.ticket.test.ts` — button disabled + status/latency (mocked fetch).
 
-```sh
-npm run build
-```
+## Stretch ideas (describe only)
 
-You can preview the production build with `npm run preview`.
+- Risk checks, copy trade fan-out, reconnect/backoff, small SVG sparklines.
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+## Notes
+
+- Keep implementation inside the 4-hour box. Narrate SSR safety (`onMount` for WS), typed adapters, and optimistic updates.
