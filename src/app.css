@@ -1,12 +1,15 @@
 @import 'tailwindcss';
-@plugin '@tailwindcss/forms';
-@plugin '@tailwindcss/typography';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Tailwind v4: define design tokens here */
+@theme {
+	--color-bg: #0b0f14;
+	--color-card: #121821;
+	--color-ink: #e6eef7;
+	--color-muted: #9fb0c2;
+	--color-accent: #5fb3ff;
+}
 
-/* Light utility for visually hidden text */
+/* a11y helper */
 .sr-only {
 	position: absolute;
 	width: 1px;
