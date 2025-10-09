@@ -12,7 +12,10 @@
 		<header class="mb-4">
 			<h1 class="text-xl font-semibold">Mini Trade Console</h1>
 			<p class="text-sm text-muted">
-				SvelteKit refresher • watchlist • order ticket • positions/P&amp;L
+				SvelteKit refresher • Watchlist • Orders • Positions / P&amp;L
+			</p>
+			<p>
+				<a href="/debug" class="text-sm text-blue-600 hover:underline">Debug Websocket</a>
 			</p>
 		</header>
 		<main class="grid gap-3 md:grid-cols-2">
