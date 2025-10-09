@@ -2,9 +2,9 @@
 	import { onMount } from 'svelte';
 	import { applyPriceTick } from '$lib/stores';
 	import { connectTickers } from '$lib/api/coinbase';
-	import Watchlist from '../components/Watchlist.svelte';
-	import OrderForm from '../components/OrderForm.svelte';
-	import PositionsTable from '../components/PositionsTable.svelte';
+	import Watchlist from '$lib/components/Watchlist.svelte';
+	import OrderForm from '$lib/components/OrderForm.svelte';
+	import PositionsTable from '$lib/components/PositionsTable.svelte';
 
 	onMount(() => {
 		const conn = connectTickers(

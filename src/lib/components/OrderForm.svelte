@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { SYMBOLS } from '$lib/symbols';
 	import { lastLatency, positions, type Symbol } from '$lib/stores';
-	import type { OrderRequest } from '../../src/routes/api/order/+server';
+	import type { OrderRequest } from '../../routes/api/order/+server';
 
 	let sym = 'ES' as unknown as Symbol;
 	let side: 'buy' | 'sell' = 'buy';
@@ -60,7 +60,7 @@
 			// Optional: read server-simulated latency if you want to show both
 			// const { latency } = (await res.json()) as { latency: number };
 			statusMsg = `Filled ${signed > 0 ? 'BUY' : 'SELL'} ${Math.abs(q)} ${sym} in ${rtMs} ms`;
-		} catch (error) {
+		} catch {
 			statusMsg = 'Network error placing order.';
 		} finally {
 			pending = false;
@@ -81,7 +81,7 @@
 			bind:value={sym}
 			class="w-full rounded-lg border border-slate-700 bg-[#0f1520] px-3 py-2 text-ink"
 		>
-			{#each SYMBOLS as s}<option value={s}>{s}</option>{/each}
+			{#each SYMBOLS as s (s)}<option value={s}>{s}</option>{/each}
 		</select>
 
 		<label for="side" class="mt-2 mb-1 block font-semibold">Side</label>

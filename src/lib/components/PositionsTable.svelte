@@ -15,7 +15,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each SYMBOLS as s}
+			{#each SYMBOLS as s (s)}
 				<tr>
 					<td class="border-b border-slate-800 p-2 font-semibold">{s}</td>
 					<td class="border-b border-slate-800 p-2">{$positions[s as Symbol]}</td>

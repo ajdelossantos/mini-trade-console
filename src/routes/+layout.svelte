@@ -1,5 +1,6 @@
 <script lang="ts">
 	import '../app.css';
+	import { resolve } from '$app/paths';
 </script>
 
 <svelte:head>
@@ -11,13 +12,14 @@
 	<div class="mx-auto max-w-5xl p-4">
 		<header class="mb-4">
 			<h1 class="text-xl font-semibold">
-				<a href="/" class="hover:underline">Mini Trade Console</a>
+				<a href={resolve('/')} class="hover:underline">Mini Trade Console</a>
 			</h1>
 			<p class="text-sm text-muted">
 				SvelteKit refresher • Watchlist • Orders • Positions / P&amp;L
 			</p>
 			<p>
-				<a href="/debug" class="text-sm text-blue-600 hover:underline">Debug Websocket</a>
+				<a href={resolve('/debug')} class="text-sm text-blue-600 hover:underline">Debug Websocket</a
+				>
 			</p>
 		</header>
 		<main class="grid gap-3 md:grid-cols-2">

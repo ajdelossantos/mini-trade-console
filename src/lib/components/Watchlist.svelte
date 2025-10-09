@@ -16,7 +16,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each SYMBOLS as s}
+			{#each SYMBOLS as s (s)}
 				{#key s}
 					{#await Promise.resolve() then _}
 						<!-- Force re-render on each price update -->
