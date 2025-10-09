@@ -1,8 +1,17 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { prices, positions, pnl, lastLatency, type Symbol, applyPriceTick } from '$lib/stores';
+	import {
+		prices,
+		lastPrices,
+		positions,
+		pnl,
+		lastLatency,
+		type Symbol,
+		applyPriceTick
+	} from '$lib/stores';
 	import { SYMBOLS } from '$lib/symbols';
 	import { connectTickers } from '$lib/api/coinbase';
+	import { fmtPrice, delta, deltaUI } from '$lib/utils';
 
 	// Order form state
 	let sym: Symbol = 'ES';
@@ -41,11 +50,32 @@
 		</thead>
 		<tbody>
 			{#each SYMBOLS as s}
-				<tr>
-					<td class="border-b border-slate-800 p-2 font-semibold">{s}</td>
-					<td class="border-b border-slate-800 p-2">{$prices[s] ?? '—'}</td>
-					<td class="border-b border-slate-800 p-2">— <!-- TODO: ▲/▼ vs lastPrices --></td>
-				</tr>
+				{#key s}
+					{#await Promise.resolve() then _}
+						<!-- Force re-render on each price update -->
+						{@const cur = $prices[s as Symbol]}
+						{@const last = $lastPrices[s as Symbol]}
+						{@const d = delta(cur, last)}
+						{@const ui = deltaUI(d.dir as -1 | 0 | 1)}
+
+						<tr>
+							<td class="border-b border-slate-800 p-2 font-semibold">{s}</td>
+							<td class="border-b border-slate-800 p-2">{fmtPrice(cur)}</td>
+							<td class="border-b border-slate-800 p-2 {ui.cls}">
+								<span aria-hidden="true">{ui.arrow}</span>
+								{#if d.dir !== 0}
+									<span class="ml-1">{d.text}</span>
+								{:else}
+									<span class="opacity=70 ml-1">{d.text}</span>
+								{/if}
+								<span class="sr-only">
+									{ui.sr}
+									{d.dir === 0 ? '' : d.text}
+								</span>
+							</td>
+						</tr>
+					{/await}
+				{/key}
 			{/each}
 		</tbody>
 	</table>
@@ -118,8 +148,8 @@
 			{#each SYMBOLS as s}
 				<tr>
 					<td class="border-b border-slate-800 p-2 font-semibold">{s}</td>
-					<td class="border-b border-slate-800 p-2">{$positions[s]}</td>
-					<td class="border-b border-slate-800 p-2">{$pnl[s]}</td>
+					<td class="border-b border-slate-800 p-2">{$positions[s as Symbol]}</td>
+					<td class="border-b border-slate-800 p-2">{$pnl[s as Symbol]}</td>
 				</tr>
 			{/each}
 		</tbody>
