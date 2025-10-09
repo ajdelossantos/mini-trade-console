@@ -10,7 +10,9 @@
 <div class="min-h-dvh bg-bg text-ink">
 	<div class="mx-auto max-w-5xl p-4">
 		<header class="mb-4">
-			<h1 class="text-xl font-semibold">Mini Trade Console</h1>
+			<h1 class="text-xl font-semibold">
+				<a href="/" class="hover:underline">Mini Trade Console</a>
+			</h1>
 			<p class="text-sm text-muted">
 				SvelteKit refresher • Watchlist • Orders • Positions / P&amp;L
 			</p>
