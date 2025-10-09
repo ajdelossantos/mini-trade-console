@@ -12,6 +12,7 @@
 	import { SYMBOLS } from '$lib/symbols';
 	import { connectTickers } from '$lib/api/coinbase';
 	import { fmtPrice, delta, deltaUI } from '$lib/utils';
+	import type { OrderRequest } from '../../src/routes/api/order/+server';
 
 	// Order form state
 	let sym: Symbol = 'ES';
@@ -32,7 +33,61 @@
 	});
 
 	async function submitOrder() {
-		// TODO: POST /api/order; optimistic positions; update lastLatency; set statusMsg
+		if (pending) return;
+
+		const q = Number(qty);
+
+		if (!Number.isInteger(q) || q < 1) {
+			statusMsg = 'Quantity must be an integer ≥ 1.';
+			return;
+		}
+
+		pending = true;
+		statusMsg = 'Submitting order...';
+		const t0 = performance.now();
+
+		try {
+			const body: OrderRequest = {
+				sym,
+				side,
+				qty: q
+			};
+			const res = await fetch('/api/order', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(body)
+			});
+
+			const t1 = performance.now();
+			const rtMs = Math.round(t1 - t0);
+			lastLatency.set(rtMs);
+
+			if (!res.ok) {
+				// Server-side validation or simulated failure
+				let err = '';
+				try {
+					const j = await res.json();
+					err = j?.message ?? `HTTP ${res.status}`;
+				} catch {
+					err = `HTTP ${res.status}`;
+				}
+				statusMsg = `Order failed: ${err}`;
+
+				return;
+			}
+
+			// Success -> optimistically update positions
+			const signed = side === 'buy' ? q : -q;
+			positions.update((p) => ({ ...p, [sym]: (p[sym] ?? 0) + signed }));
+
+			// Optional: read server-simulated latency if you want to show both
+			// const { latency } = (await res.json()) as { latency: number };
+			statusMsg = `Filled ${signed > 0 ? 'BUY' : 'SELL'} ${Math.abs(q)} ${sym} in ${rtMs} ms`;
+		} catch (error) {
+			statusMsg = 'Network error placing order.';
+		} finally {
+			pending = false;
+		}
 	}
 </script>
 
@@ -84,7 +139,7 @@
 <!-- Order Ticket -->
 <section aria-labelledby="order-h" class="rounded-2xl bg-card p-3 md:col-span-1">
 	<h2 id="order-h" class="mb-2 text-sm text-accent">Order Ticket</h2>
-	<form on:submit|preventDefault={submitOrder} aria-describedby="order-help">
+	<form on:submit|preventDefault={submitOrder} aria-describedby="order-help" aria-busy={pending}>
 		<p id="order-help" class="sr-only">
 			Select symbol, side, and quantity (≥ 1). Submit to place a mock order.
 		</p>

@@ -14,13 +14,13 @@ import { json, type RequestHandler } from '@sveltejs/kit';
 type Symbol = 'ES' | 'NQ' | 'CL';
 type Side = 'buy' | 'sell';
 
-interface OrderRequest {
+export interface OrderRequest {
 	sym: Symbol;
 	side: Side;
 	qty: number;
 }
 
-interface OrderResponse {
+export interface OrderResponse {
 	ok: boolean;
 	latency: number;
 	message?: string;
